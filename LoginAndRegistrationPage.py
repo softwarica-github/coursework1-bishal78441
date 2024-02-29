@@ -153,23 +153,29 @@ def login():
     global db, cursor
 
     try:
-        cursor.execute("SELECT * FROM user WHERE Email = %s AND Password = %s",
-                       (email_entry.get(), password_entry1.get()))
-        result = cursor.fetchall()
+        cursor.execute("SELECT * FROM user WHERE Email = %s", (email_entry.get(),))
+        user_data = cursor.fetchone()
 
-        if result:
-            if result[0][5] == 'admin':
-                window.withdraw()  # Hide the current window
-                os.system("python admin.py")
-                window.destroy()
+        if user_data:
+            hashed_password_from_db = user_data[3]  # Assuming password is at index 3 in your user table
+
+            # Check if the entered password matches the hashed password from the database
+            if bcrypt.checkpw(password_entry1.get().encode('utf-8'), hashed_password_from_db.encode('utf-8')):
+                if user_data[5] == 'admin':
+                    window.withdraw()  # Hide the current window
+                    os.system("python admin.py")
+                    window.destroy()
+                else:
+                    window.withdraw()  # Hide the current window
+                    os.system("python home.py")
+                    window.destroy()
             else:
-                window.withdraw()  # Hide the current window
-                os.system("python home.py")
-                window.destroy()
+                # Incorrect password
+                messagebox.showerror("Error", "Incorrect password")
+
         else:
             # User does not exist
-            response = messagebox.askquestion(
-                "User not found", "Do you want to register?")
+            response = messagebox.askquestion("User not found", "Do you want to register?")
 
     except mysql.connector.Error as err:
         messagebox.showerror("Error", f"Error accessing database: {err}")
@@ -240,9 +246,6 @@ def forgot_password():
     confirm_password_label = Label(win, text='• Confirm Password', fg="#89898b", bg='#f8f8f8',
                                    font=("yu gothic ui", 11, 'bold'))
     confirm_password_label.place(x=40, y=160)
-
-    # checkButton2 = Checkbutton(win, bg='#f8f8f8', command=password_command, text='Show Password')
-    # checkButton2.place(x=190, y=165)
 
     # ======= Update password Button ============
     update_pass = Button(win, fg='#f8f8f8', text='Update Password', bg='#1b87d2', font=("yu gothic ui bold", 14),

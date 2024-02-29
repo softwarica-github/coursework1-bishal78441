@@ -157,10 +157,7 @@ def encrypt(pt, rkb, rk):
 def startDesDecryption(pt,key):
     print("="*50)
     print("==========================>>>>>>>> Start decryption process...")
-    #pt = "Your lips are smoother than vaseline"
-    #key = secrets.token_hex(8).upper()
     print("The Key: ",key)
-    #pt = str2hex(pt)
     print("The cipher: ",pt)
     cyc = math.ceil(len(pt)/16)
     st = 0

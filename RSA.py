@@ -82,6 +82,7 @@ def dec2bin(num):
         for i in range(0, counter):
             res = '0' + res
     return res 
+    
 def hexadecimalToDecimal(hexval):
 
     # Finding length
